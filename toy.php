@@ -16,6 +16,22 @@
 
 	 		  Retrieve info about toy from the db using provided PDO connection
 	 */
+	function get_toy_info(PDO $pdo, string $toy_id) {
+		$sql = "
+			SELECT t.*, m.name AS manufacturer_name, m.Street, m.City, m.State, m.ZipCode, m.phone, m.contact
+			FROM toy t
+			INNER JOIN manuf m ON t.manid = m.manid
+			WHERE t.toynum = :toy_id
+			LIMIT 1;
+		";
+
+		$stmt = $pdo->prepare($sql);
+		$stmt->execute(['toy_id' => $toy_id]);
+
+		return $stmt->fetch(PDO::FETCH_ASSOC);
+	}
+
+	$toy_info = get_toy_info($pdo, $toy_id);
 
 
 // Closing PHP tag  ?> 
@@ -64,45 +80,45 @@
 			<div class="toy-details-container">
 				<div class="toy-image">
 					<!-- Display image of toy with its name as alt text -->
-					<img src="<?= '' ?>" alt="<?= '' ?>">
+					<img src="<?= $toy_info['imgSrc'] ?>" alt="<?= $toy_info['name'] ?>">
 				</div>
 
 				<div class="toy-details">
 
 					<!-- Display name of toy -->
-			        <h1><?= '' ?></h1>
+			        <h1><?= $toy_info['name'] ?></h1>
 
 			        <hr />
 
 			        <h3>Toy Information</h3>
 
 			        <!-- Display description of toy -->
-			        <p><strong>Description:</strong> <?= '' ?></p>
+			        <p><strong>Description:</strong> <?= $toy_info['description'] ?></p>
 
 			        <!-- Display price of toy -->
-			        <p><strong>Price:</strong> $ <?= '' ?></p>
+			        <p><strong>Price:</strong> $ <?= $toy_info['price'] ?></p>
 
 			        <!-- Display age range of toy -->
-			        <p><strong>Age Range:</strong> <?= '' ?></p>
+			        <p><strong>Age Range:</strong> <?= $toy_info['agerange'] ?></p>
 
 			        <!-- Display stock of toy -->
-			        <p><strong>Number In Stock:</strong> <?= '' ?></p>
+			        <p><strong>Number In Stock:</strong> <?= $toy_info['numinstock'] ?></p>
 
 			        <br />
 
 			        <h3>Manufacturer Information</h3>
 
 			        <!-- Display name of manufacturer -->
-			        <p><strong>Name:</strong> <?= '' ?> </p>
+			        <p><strong>Name:</strong> <?= $toy_info['manufacturer_name'] ?> </p>
 
 			        <!-- Display address of manufacturer -->
-			        <p><strong>Address:</strong> <?= '' ?></p>
+			        <p><strong>Address:</strong> <?= $toy_info['Street'] ?>, <?= ($toy_info['City']) ?>, <?= ($toy_info['State']) ?> , 	<?= ($toy_info['ZipCode']) ?></p>
 
 			        <!-- Display phone of manufacturer -->
-			        <p><strong>Phone:</strong> <?= '' ?></p>
+			        <p><strong>Phone:</strong> <?= $toy_info['phone'] ?></p>
 
 			        <!-- Display contact of manufacturer -->
-			        <p><strong>Contact:</strong> <?= '' ?></p>
+			        <p><strong>Contact:</strong> <?= $toy_info['contact'] ?></p>
 			    </div>
 			</div>
 		</main>
